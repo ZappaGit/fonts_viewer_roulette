@@ -58,13 +58,26 @@ screen.key(['escape', 'q', 'C-c'], function() {
     return process.exit(0);
 });
 
-setInterval(() => {
+function changeFont() {
     const min = 0;
     const max = fonts.length;
     let currentFont = Math.floor(Math.random() * (max - min + 1)) + min;
     let currentColor = currentFont % colors.length;
     updateBoxContent(`${currentFont} --- ${fonts[currentFont]}`, fonts[currentFont], colors[currentColor]);
+}
+
+changeFont();
+
+let intervalId = setInterval(() => {
+    changeFont()
 }, 3000);
+
+screen.key(['space'], function() {
+    clearInterval(intervalId); // Detener el intervalo para no interferir
+    changeFont(); // Cambiar la fuente al presionar la tecla
+    setTimeout(() => intervalId = setInterval(changeFont, 3000), 3000); // Reiniciar el intervalo después de 3 segundos
+});
+
 
 // Renderizar la pantalla
 screen.render();
