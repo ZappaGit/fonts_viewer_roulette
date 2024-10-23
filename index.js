@@ -6,6 +6,7 @@ const path = require("path");
 
 const fontsDir = "./node_modules/figlet/fonts/";
 const fonts = [];
+const colors = ['blue', 'green', 'red', 'yellow', 'black']
 
 fs.readdir(fontsDir, (err, files) => {
     const fontNames = files.map((file) => path.parse(file).name);
@@ -37,12 +38,13 @@ const box = blessed.box({
 screen.append(box);
 
 // Función para actualizar el contenido del cuadro con texto figlet
-function updateBoxContent(text, font) {
+function updateBoxContent(text, font, color) {
     figlet.text(text, { font: font }, function(err, data) {
         if (err) {
             box.setContent('Error: ' + err.message);
         } else {
             box.setContent(data);
+            box.style.bg = color
         }
         screen.render();
     });
@@ -56,11 +58,12 @@ screen.key(['escape', 'q', 'C-c'], function() {
     return process.exit(0);
 });
 
-
-let currentFont = 0;
 setInterval(() => {
-    currentFont = (currentFont + 1) % fonts.length;
-    updateBoxContent(`${fonts[currentFont]}`, fonts[currentFont]);
+    const min = 0;
+    const max = fonts.length;
+    let currentFont = Math.floor(Math.random() * (max - min + 1)) + min;
+    let currentColor = currentFont % colors.length;
+    updateBoxContent(`${currentFont} --- ${fonts[currentFont]}`, fonts[currentFont], colors[currentColor]);
 }, 3000);
 
 // Renderizar la pantalla
